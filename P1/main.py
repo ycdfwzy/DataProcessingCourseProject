@@ -87,74 +87,71 @@ def get_model(K_classiication):
             rtn = ac
         return rtn
 
-    input = Input((178,))
-    # block
-    x = tf.expand_dims(input, axis=-1 )
-    # x1 = Conv1D(kernel_size=1, filters=4, padding = 'same')(x)
-    # x2 = Conv1D(kernel_size=3, filters=4, padding = 'same')(x)
-    # x = Concatenate()([x1,x2])
-    # x = denseblock(x, 8, 4, 'db1')
-    # x = denseblock(x, 16, 7, 'db2')
-    # x = denseblock(x, 24, 11, 'db3')
-    # x = denseblock(x, 32, 13, 'db4')
+    if K_classiication == 5:
+        input = Input((178,))
+        # block
+        x = tf.expand_dims(input, axis=-1 )
+        # x1 = Conv1D(kernel_size=1, filters=4, padding = 'same')(x)
+        # x2 = Conv1D(kernel_size=3, filters=4, padding = 'same')(x)
+        # x = Concatenate()([x1,x2])
+        # x = denseblock(x, 8, 4, 'db1')
+        # x = denseblock(x, 16, 7, 'db2')
+        # x = denseblock(x, 24, 11, 'db3')
+        # x = denseblock(x, 32, 13, 'db4')
 
-    x = Conv1D(kernel_size=3, filters=4, padding = 'same')(x)
-    x = Activation('relu')(x)
-    # x = AveragePooling1D(2)(x)
-    x = BatchNormalization()(x)
+        x = Conv1D(kernel_size=3, filters=4, padding = 'same')(x)
+        x = Activation('relu')(x)
+        # x = AveragePooling1D(2)(x)
+        x = BatchNormalization()(x)
 
-    x = Conv1D(kernel_size=3, filters=6, padding = 'same')(x)
-    x = Activation('relu')(x)
-    x = AveragePooling1D(2)(x)
-    x = BatchNormalization()(x)
+        x = Conv1D(kernel_size=3, filters=6, padding = 'same')(x)
+        x = Activation('relu')(x)
+        x = AveragePooling1D(2)(x)
+        x = BatchNormalization()(x)
 
-    x = Conv1D(kernel_size=3, filters=8, padding = 'same')(x)
-    x = Activation('relu')(x)
-    x = BatchNormalization()(x)
-
-
-    x = Conv1D(kernel_size=3, filters=12, padding = 'same')(x)
-    x = Activation('relu')(x)
-    x = MaxPooling1D(2)(x)
-    x = BatchNormalization()(x)
-
-    x = Conv1D(kernel_size=3, filters=14, padding = 'same')(x)
-    x = Activation('relu')(x)
-    x = MaxPooling1D(2)(x)
-    x = BatchNormalization()(x)
-
-    x = Conv1D(kernel_size=3, filters=22, padding = 'same')(x)
-    x = Activation('relu')(x)
-    x = MaxPooling1D(2, padding = 'same')(x)
-    x = BatchNormalization()(x)
-
-    x = Conv1D(kernel_size=3, filters=26, padding = 'same')(x)
-    x = Activation('relu')(x)
-    x = MaxPooling1D(2)(x)
-    x = BatchNormalization()(x)
-
-    x = Conv1D(kernel_size=2, strides = 2, filters = 28)(x)
-    x = Activation('relu')(x)
+        x = Conv1D(kernel_size=3, filters=8, padding = 'same')(x)
+        x = Activation('relu')(x)
+        x = BatchNormalization()(x)
 
 
-    x = GlobalAveragePooling1D()(x)
-    # x = tf.expand_dims(x, axis = 0)
-    x = Dense(K_classiication, activation='softmax')(x)
-    model = Model(input, x)
+        x = Conv1D(kernel_size=3, filters=12, padding = 'same')(x)
+        x = Activation('relu')(x)
+        x = MaxPooling1D(2)(x)
+        x = BatchNormalization()(x)
 
-    # model = tf.keras.Sequential([
-    #     tf.keras.layers.Input(shape=(178,)),
-    #     tf.keras.layers.Dense(178, activation='relu'),
-    #     tf.keras.layers.Dense(178, activation='relu'),
-    #     tf.keras.layers.Dense(160, activation='relu'),
-    #     tf.keras.layers.Dropout(0.2),
-    #     tf.keras.layers.Dense(80, activation='relu'),
-    #     tf.keras.layers.Dense(40, activation='relu'),
-    #     tf.keras.layers.Dense(20, activation='relu'),
-    #     # tf.keras.layers.Dropout(0.2),
-    #     tf.keras.layers.Dense(10, activation='relu'),
-    #     tf.keras.layers.Dense(K_classiication, activation='softmax')
-    # ])
+        x = Conv1D(kernel_size=3, filters=14, padding = 'same')(x)
+        x = Activation('relu')(x)
+        x = MaxPooling1D(2)(x)
+        x = BatchNormalization()(x)
+
+        x = Conv1D(kernel_size=3, filters=22, padding = 'same')(x)
+        x = Activation('relu')(x)
+        x = MaxPooling1D(2, padding = 'same')(x)
+        x = BatchNormalization()(x)
+
+        x = Conv1D(kernel_size=3, filters=26, padding = 'same')(x)
+        x = Activation('relu')(x)
+        x = MaxPooling1D(2)(x)
+        x = BatchNormalization()(x)
+
+        x = Conv1D(kernel_size=2, strides = 2, filters = 28)(x)
+        x = Activation('relu')(x)
+
+
+        x = GlobalAveragePooling1D()(x)
+        # x = tf.expand_dims(x, axis = 0)
+        x = Dense(K_classiication, activation='softmax')(x)
+        model = Model(input, x)
+    else:
+        model = tf.keras.Sequential([
+            tf.keras.layers.Input(shape=(178,)),
+            tf.keras.layers.Dense(160, activation='relu'),
+            tf.keras.layers.Dropout(0.2),
+            tf.keras.layers.Dense(60, activation='relu'),
+            tf.keras.layers.Dropout(0.2),
+            tf.keras.layers.Dense(6, activation='relu'),
+            tf.keras.layers.Dense(K_classiication, activation='softmax')
+        ])
     model.compile(optimizer='adam',
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
