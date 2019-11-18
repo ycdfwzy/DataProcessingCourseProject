@@ -125,7 +125,7 @@ dmypy.json
 .pyre/
 
 P1/data/
-P2/data
+P2/data/
 .idea/
 .vscode/
 
