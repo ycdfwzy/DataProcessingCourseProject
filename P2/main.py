@@ -21,7 +21,7 @@ def read_data():
 if __name__ == "__main__":
     data = read_data()
     data_x = np.array(data)
-    kmeans_model = KMeans(5)
+    kmeans_model = KMeans(5, random_state=4) # 4 and 6 can get pretty good result
     kmeans_model.fit(data_x)
     labels = kmeans_model.label_pred
 

@@ -3,9 +3,10 @@
 import numpy as np
 
 class KMeans:
-    def __init__(self, n_clusters):
+    def __init__(self, n_clusters, random_state=None):
         self.__n_clusters = n_clusters
         self.__dataset = None
+        self.__random_state = random_state
 
     def __distance(self, x, y):
         # 欧氏距离
@@ -14,8 +15,20 @@ class KMeans:
     def __rand_centers(self):
         m, n = self.__dataset.shape
         centroids = np.zeros((self.__n_clusters, n))
+        indexs = []
+
+        # get random generator
+        rdm = None
+        try:
+            rdm = np.random.RandomState(self.__random_state)
+        except:
+            rdm = np.random
+
         for i in range(self.__n_clusters):
-            ind = int(np.random.uniform(0, m))
+            ind = int(rdm.uniform(0, m))
+            while ind in indexs:
+                ind = int(rdm.uniform(0, m))
+            indexs.append(ind)
             centroids[i, :] = self.__dataset[ind, :]
         return centroids
     
@@ -28,7 +41,7 @@ class KMeans:
         
         while assign_changed:
             assign_changed = False
-            
+
             for i in range(m):
                 min_dis = float("inf")
                 min_ind = -1
