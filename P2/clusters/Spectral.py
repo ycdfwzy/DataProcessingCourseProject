@@ -4,14 +4,15 @@ import numpy as np
 from .KMeans import KMeans
 
 class SpectralClustering:
-    def __init__(self, n_clusters, gamma=1.0):
+    def __init__(self, n_clusters, gamma=1.0, random_state=None):
         self.__n_clusters = n_clusters
         self.__dataset = None
         self.__gamma = gamma
+        self.__random_state = random_state
 
     def __distance(self, x, y):
-        # 欧氏距离
-        return np.sqrt(np.sum((x - y) ** 2))
+        # 欧氏距离 无开方
+        return np.sum((x - y) ** 2)
 
     def __distance_matrix(self):
         m = np.shape(self.__dataset)[0]
@@ -32,8 +33,8 @@ class SpectralClustering:
             neighbours = [dis_ind[j][1] for j in range(self.__n_clusters + 1)] # nearest k neighbours
 
             for j in neighbours:
-                aff_mat[i][j] = aff_mat[j][i] = np.exp(-self.__gamma * dis_mat[i][j] ** 2)
-
+                aff_mat[i][j] = np.exp(-self.__gamma * dis_mat[i][j])
+                aff_mat[j][i] = aff_mat[i][j]
         return aff_mat
 
     def __laplacian_matrix(self, aff_mat):
@@ -44,15 +45,23 @@ class SpectralClustering:
         laplacian_mat = np.diag(degree_mat) - aff_mat
 
         # normalize
-        norm_degree = np.diag(1.0 / (degree_mat ** 0.5))
-        return np.dot(np.dot(norm_degree, laplacian_mat), norm_degree)
+        return laplacian_mat
+        # norm_degree = np.diag(1.0 / (degree_mat ** (0.5)))
+        # return np.dot(np.dot(norm_degree, laplacian_mat), norm_degree)
+
+    def __eigen_matrix(self, lap_mat):
+        eigval, eigvec = np.linalg.eig(lap_mat)
+        dict_eig = dict(zip(eigval, range(len(eigval))))
+        k_eig = np.sort(eigval)[0:self.__n_clusters]
+        ind = [dict_eig[k] for k in k_eig]
+        return eigval[ind], eigvec[:, ind]
 
     def __cluster(self):
         dis_mat = self.__distance_matrix()
         aff_mat = self.__affinity_matrix(dis_mat)
         lap_mat = self.__laplacian_matrix(aff_mat)
-        lam, H = np.linalg.eig(lap_mat)
-        kmeas_model = KMeans(self.__n_clusters, random_state=4)
+        _, H = self.__eigen_matrix(lap_mat)
+        kmeas_model = KMeans(self.__n_clusters, random_state=self.__random_state)
         kmeas_model.fit(H)
         return kmeas_model.centroids, kmeas_model.label_pred
 
