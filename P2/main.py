@@ -7,6 +7,7 @@ import numpy as np
 from sklearn import metrics
 from clusters.KMeans import KMeans
 from clusters.Spectral import SpectralClustering
+from clusters.Hierarchical import HierarchicalClustering
 import matplotlib.pyplot as plt
 
 def read_data():
@@ -28,9 +29,13 @@ if __name__ == "__main__":
     # kmeans_model.fit(data_x)
     # labels = kmeans_model.label_pred
 
-    spec = SpectralClustering(5, gamma=0.01, random_state=4)
-    spec.fit(data_x)
-    labels = spec.label_pred
+    # spec = SpectralClustering(5, gamma=0.01, random_state=4)
+    # spec.fit(data_x)
+    # labels = spec.label_pred
+
+    heir = HierarchicalClustering(5)
+    heir.fit(data_x)
+    labels = heir.label_pred
 
     print('Calinski-Harabasz:', metrics.calinski_harabasz_score(data_x, labels))
     print('Silhouette Coefficient:', metrics.silhouette_score(data_x, labels, metric='euclidean'))
