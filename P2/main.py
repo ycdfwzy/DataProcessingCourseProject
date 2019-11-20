@@ -24,7 +24,10 @@ def read_data():
 def read_label():
     labels = []
     with open("data/labels.txt") as fin:
-        labels = [int(row) for row in fin.read().split('\n')]
+        for row in fin.read().split('\n'):
+            if row == '':
+                continue
+            labels.append(int(row))
     return labels
 
 if __name__ == "__main__":
@@ -39,11 +42,11 @@ if __name__ == "__main__":
     # spec.fit(data_x)
     # labels = spec.label_pred
 
-    heir = HierarchicalClustering(5)
-    heir.fit(data_x)
-    labels = heir.label_pred
+    # heir = HierarchicalClustering(5)
+    # heir.fit(data_x)
+    # labels = heir.label_pred
 
-    # labels = read_label()
+    labels = read_label()
 
     print('Calinski-Harabasz:', metrics.calinski_harabasz_score(data_x, labels))
     print('Silhouette Coefficient:', metrics.silhouette_score(data_x, labels, metric='euclidean'))
