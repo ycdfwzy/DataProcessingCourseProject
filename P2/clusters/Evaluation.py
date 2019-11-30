@@ -21,6 +21,7 @@ def intra_cluster_cohesion(X, labels):
             wss += euclid_distance(p, mean)
     return wss
 
+# 类间分离度，越高越好
 def inter_cluster_separation(X, labels):
     assert len(X) == len(labels), "data length not the same with labels length"
     clusters = dict()

@@ -24,6 +24,7 @@ class KMeans:
         except:
             rdm = np.random
 
+        # 随机获取聚类初始中心点
         for i in range(self.__n_clusters):
             ind = int(rdm.uniform(0, m))
             while ind in indexs:
@@ -35,7 +36,6 @@ class KMeans:
     def __cluster(self):
         m = np.shape(self.__dataset)[0]
         cluster_assign = [0.] * m
-        # cluster_devi = [0.] * m
         centroids = self.__rand_centers()
         assign_changed = True
         
@@ -57,8 +57,8 @@ class KMeans:
                 if cluster_assign[i] != min_ind:
                     assign_changed = True
                     cluster_assign[i] = min_ind
-                    # cluster_devi[i] = min_dis ** 2
             
+            # 更新聚类样本的簇中心
             for j in range(self.__n_clusters):
                 cluster_points = self.__dataset[np.nonzero(np.array(cluster_assign) == j)[0]]
                 centroids[j, :] = np.mean(cluster_points, axis=0)

@@ -14,6 +14,7 @@ class SpectralClustering:
         # 欧氏距离 无开方
         return np.sum((x - y) ** 2)
 
+    # 计算距离矩阵
     def __distance_matrix(self):
         m = np.shape(self.__dataset)[0]
         dis_mat = np.zeros((m, m))
@@ -23,32 +24,35 @@ class SpectralClustering:
                 dis_mat[j][i] = dis_mat[i][j]
         return dis_mat
 
+    # 通过距离矩阵计算相似度矩阵
     def __affinity_matrix(self, dis_mat):
         m = np.shape(self.__dataset)[0]
         aff_mat = np.zeros((m, m))
 
         for i in range(m):
+            # 找到最近的 k 个邻居
             dis_ind = zip(dis_mat[i], range(m))
             dis_ind = sorted(dis_ind, key=lambda x:x[0])
-            neighbours = [dis_ind[j][1] for j in range(self.__n_clusters + 1)] # nearest k neighbours
+            neighbours = [dis_ind[j][1] for j in range(self.__n_clusters + 1)]
 
             for j in neighbours:
                 aff_mat[i][j] = np.exp(-self.__gamma * dis_mat[i][j])
                 aff_mat[j][i] = aff_mat[i][j]
         return aff_mat
 
+    # 拉普拉斯矩阵
     def __laplacian_matrix(self, aff_mat):
         # degree matrix
         degree_mat = np.sum(aff_mat, axis=1)
 
         # laplacian matrix
         laplacian_mat = np.diag(degree_mat) - aff_mat
-
-        # normalize
         return laplacian_mat
+        # normalize
         # norm_degree = np.diag(1.0 / (degree_mat ** (0.5)))
         # return np.dot(np.dot(norm_degree, laplacian_mat), norm_degree)
 
+    # 计算特征值，寻找前k小的值
     def __eigen_matrix(self, lap_mat):
         eigval, eigvec = np.linalg.eig(lap_mat)
         dict_eig = dict(zip(eigval, range(len(eigval))))
@@ -61,6 +65,7 @@ class SpectralClustering:
         aff_mat = self.__affinity_matrix(dis_mat)
         lap_mat = self.__laplacian_matrix(aff_mat)
         _, H = self.__eigen_matrix(lap_mat)
+        # 对特征值结果进行K Means聚类
         kmeas_model = KMeans(self.__n_clusters, random_state=self.__random_state)
         kmeas_model.fit(H)
         return kmeas_model.centroids, kmeas_model.label_pred

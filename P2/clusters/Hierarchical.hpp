@@ -44,6 +44,7 @@ private:
         return sqrt(sum);
     }
 
+    // 遍历层次树，写标签
     void traverse(ClusterNode* node, int label) {
         if (node->left == nullptr && node->right == nullptr)
             this -> label_pred[node->id] = label;
@@ -95,6 +96,7 @@ private:
                 new_point[i] = (le->center[i] * le->count + ri->center[i] * ri->count) /
                     (le->count + ri->count);
             
+            // 将新的类加入，删除原来的类
             ClusterNode* new_node = new ClusterNode(new_point, cluster_id, le, ri, min_dis,
                 le->count + ri->count);
             cluster_id--;
@@ -107,7 +109,6 @@ private:
         label_pred = vector<int>(m, -1);
         this->set_labels(nodes);
         printf("done.\n");
-        //should release space here
     }
 public:
     HierarchicalClustering(int n_clusters) {

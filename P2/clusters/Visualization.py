@@ -4,7 +4,6 @@ from sklearn import decomposition
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as PathEffects
 import seaborn as sns
-import pandas as pd
 
 def scatter(x, labels):
     # set info
@@ -30,17 +29,25 @@ def scatter(x, labels):
         txts.append(txt)
 
     # show pic
-    plt.show()
+    while True:
+        try:
+            plt.show()
+        except UnicodeDecodeError:
+            continue
+        break
     return
 
+# t-SNE降维算法
 def TSNE_scatter(X, labels):
     x = TSNE().fit_transform(X)
     scatter(x, labels)
 
+# 主成分分析
 def PCA_scatter(X, labels):
     x = decomposition.PCA(n_components=2).fit_transform(X)
     scatter(x, labels)
 
+# 因子分析
 def Factor_scatter(X, labels):
     x = decomposition.FactorAnalysis(n_components=2).fit_transform(X)
     scatter(x, labels)

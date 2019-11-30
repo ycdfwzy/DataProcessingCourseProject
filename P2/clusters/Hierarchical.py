@@ -57,6 +57,8 @@ class HierarchicalClustering:
             node1, node2 = nodes[closest[0]], nodes[closest[1]]
             new_point = np.array([(
                 node1.center[i] * node1.count + node2.center[i] * node2.count) / (node1.count + node2.count) for i in range(n)])
+
+            # 添加新类，删除旧类
             new_node = ClusterNode(new_point, 
                                    left=node1, 
                                    right=node2,
