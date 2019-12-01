@@ -1,16 +1,7 @@
 import time
 import numpy as np
-import csv
-import matplotlib.pyplot as plt
 from sklearn.model_selection import cross_val_score, train_test_split, KFold
-from sklearn.linear_model import LinearRegression
-from sklearn import svm
 from sklearn.neural_network import MLPClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn import tree
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
 from sklearn.utils import shuffle
 import pandas as pd
@@ -141,17 +132,30 @@ def get_model(K_classiication):
         x = GlobalAveragePooling1D()(x)
         # x = tf.expand_dims(x, axis = 0)
         x = Dense(K_classiication, activation='softmax')(x)
-        model = Model(input, x)
+        # model = Model(input, x)
+        model = tf.keras.Sequential([
+            tf.keras.layers.Input(shape=(178,)),
+            tf.keras.layers.Dense(100, activation='relu'),
+            tf.keras.layers.Dense(50, activation='relu'),
+            tf.keras.layers.Dense(K_classiication, activation='softmax')
+        ])
     else:
         model = tf.keras.Sequential([
             tf.keras.layers.Input(shape=(178,)),
-            tf.keras.layers.Dense(160, activation='relu'),
-            tf.keras.layers.Dropout(0.2),
-            tf.keras.layers.Dense(60, activation='relu'),
-            tf.keras.layers.Dropout(0.2),
-            tf.keras.layers.Dense(6, activation='relu'),
+            # tf.keras.layers.Dense(170, activation='relu'),
+            tf.keras.layers.Dense(100, activation='relu'),
+            tf.keras.layers.Dense(50, activation='relu'),
             tf.keras.layers.Dense(K_classiication, activation='softmax')
         ])
+        # model = tf.keras.Sequential([
+        #     tf.keras.layers.Input(shape=(178,)),
+        #     tf.keras.layers.Dense(160, activation='relu'),
+        #     tf.keras.layers.Dropout(0.2),
+        #     tf.keras.layers.Dense(60, activation='relu'),
+        #     tf.keras.layers.Dropout(0.2),
+        #     tf.keras.layers.Dense(6, activation='relu'),
+        #     tf.keras.layers.Dense(K_classiication, activation='softmax')
+        # ])
     model.compile(optimizer='adam',
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
@@ -170,7 +174,7 @@ def main(K_classiication):
         y_train, y_test = Y[train_index], Y[test_index]
 
         model = get_model(K_classiication)
-        model.fit(x_train, y_train, epochs=20, verbose=0)
+        model.fit(x_train, y_train, batch_size=32, epochs=40, verbose=0)
 
         scores.append(model.evaluate(x_test, y_test, verbose=0)[-1])
     print(str(K_classiication)+'-classification accuracy: ', np.array(scores).mean())
