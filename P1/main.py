@@ -1,16 +1,7 @@
 import time
 import numpy as np
-import csv
-import matplotlib.pyplot as plt
 from sklearn.model_selection import cross_val_score, train_test_split, KFold
-from sklearn.linear_model import LinearRegression
-from sklearn import svm
 from sklearn.neural_network import MLPClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn import tree
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
 from sklearn.utils import shuffle
 import pandas as pd
